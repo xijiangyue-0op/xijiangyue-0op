@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker by Wangmiao</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            overflow: hidden;
+            height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .typing-text {
+            font-size: 1.5rem;
+            min-height: 40px;
+            margin: 20px 0;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: #00ff00;
+            margin-left: 5px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .code-window {
+            background-color: rgba(0, 20, 0, 0.5);
+            border: 1px solid #00ff00;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .code-line {
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            animation: typing 3s steps(40, end) forwards;
+        }
+        
+        .code-line:nth-child(2) { animation-delay: 1s; }
+        .code-line:nth-child(3) { animation-delay: 2s; }
+        .code-line:nth-child(4) { animation-delay: 3s; }
+        .code-line:nth-child(5) { animation-delay: 4s; }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid #00ff00;
+            font-size: 1.2rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .typing-text { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix-rain" id="matrixRain"></canvas>
+    
+    <div class="container">
+        <header>
+            <h1>HACKER BY WANGMIAO</h1>
+        </header>
+        
+        <div class="typing-text">
+            <span id="typed-text">系统初始化中...</span>
+            <span class="cursor"></span>
+        </div>
+        
+        <div class="code-window">
+            <div class="code-line">> 正在连接到主网络...</div>
+            <div class="code-line">> 绕过防火墙... 成功</div>
+            <div class="code-line">> 加密协议启用: AES-256</div>
+            <div class="code-line">> 建立安全连接... 完成</div>
+            <div class="code-line">> 欢迎进入终端系统</div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Wangmiao · 安全网络</p>
+        </footer>
+    </div>
+
+    <script>
+        // 打字机效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const text = "系统已就绪，等待命令输入...";
+            const typedTextElement = document.getElementById('typed-text');
+            let i = 0;
+            
+            setTimeout(function type() {
+                if (i < text.length) {
+                    typedTextElement.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, 100);
+                }
+            }, 2000);
+            
+            // 矩阵数字雨效果
+            const canvas = document.getElementById('matrixRain');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const characters = '01';
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            
+            const drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+            
+            function drawMatrix() {
+                ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#00ff00';
+                ctx.font = `${fontSize}px monospace`;
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(drawMatrix, 33);
+            
+            // 响应窗口大小变化
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        });
+    </script>
+</body>
+</html>
